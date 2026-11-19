@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 import {
   ExternalLink,
   Search,
@@ -20,6 +21,7 @@ import {
   Send
 } from 'lucide-react';
 import { POLITICAL_TRANSPARENCY, calculateAssetChange } from '../data/transparenciaPolitica';
+import { ESTADOS, CAUSALES, } from '../lib/judicialExplicado';
 import { EXECUTIVE_AUTHORITIES_2026 } from '../data/autoridadesEjecutivas2026';
 import { CONGRUENCE_BLOG_ENTRIES, CONGRUENCE_PATTERN_LABELS } from '../data/blogCongruencia';
 
@@ -83,6 +85,8 @@ export default function RegistroPolitico({ onNavigate, initialPoliticianId }: Re
     filtered[0] ||
     ALL_POLITICAL_RECORDS[0];
   const assetChange = selected ? calculateAssetChange(selected) : null;
+  const patrimonySeries = selected ? selected.assets.filter(a => /^\d{4}$/.test(a.period) && typeof a.declaredTotalArs === 'number').map(a => ({ year: a.period, total: a.declaredTotalArs as number })).sort((a, b) => a.year.localeCompare(b.year)) : [];
+  const [showJudicialHelp, setShowJudicialHelp] = useState(false);
   const executiveCount = ALL_POLITICAL_RECORDS.filter(r =>
     ['Nacion', 'Provincia', 'CABA'].includes(r.level)
   ).length;
@@ -516,10 +520,30 @@ export default function RegistroPolitico({ onNavigate, initialPoliticianId }: Re
 
               <Panel
                 icon={<Landmark className="w-4 h-4 text-emerald-400" />}
-                title="Historial patrimonial / DDJJ"
+                title="Historial patrimonial histórico / DDJJ"
               >
+                <p className="mb-3 text-xs leading-relaxed text-slate-300">Serie histórica desde la primera DDJJ pública verificable hasta la última disponible. Se conservan las declaraciones anteriores aunque ya no figuren en el portal actual. Los años sin documentos se identifican como vacíos de información, nunca como patrimonio cero.</p>
+                <div className="mb-4 rounded-xl border border-slate-800 bg-slate-950/50 p-3" aria-label="Gráfico de evolución patrimonial declarada">
+                  <p className="mb-2 text-xs font-semibold text-white">Evolución patrimonial declarada (ARS nominales)</p>
+                  {patrimonySeries.length >= 2 ? (
+                    <div className="h-52 w-full">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <LineChart data={patrimonySeries} margin={{ top: 8, right: 12, bottom: 6, left: 4 }}>
+                          <CartesianGrid stroke="#334155" strokeDasharray="3 3" />
+                          <XAxis dataKey="year" stroke="#94a3b8" tick={{ fontSize: 11 }} />
+                          <YAxis stroke="#94a3b8" tick={{ fontSize: 10 }} tickFormatter={(n: number) => new Intl.NumberFormat('es-AR', { notation: 'compact', maximumFractionDigits: 1 }).format(n)} />
+                          <Tooltip formatter={(value: number | string | undefined) => typeof value === 'number' ? money(value) : String(value ?? '')} labelFormatter={(label: string) => 'Período ' + label} />
+                          <Line type="linear" dataKey="total" name="Patrimonio declarado" stroke="#34d399" strokeWidth={2} dot={{ r: 4 }} connectNulls={false} />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    </div>
+                  ) : (
+                    <p className="text-xs leading-relaxed text-amber-200">Gráfico pendiente: se necesitan al menos dos declaraciones de períodos diferentes con totales oficiales verificados y comparables. No se grafican valores desconocidos.</p>
+                  )}
+                  <p className="mt-2 text-[10px] text-slate-400">Valores nominales declarados; no equivalen necesariamente a patrimonio neto ni están ajustados por inflación. Consultá cada fuente y sus criterios de valuación.</p>
+                </div>
                 {selected.assets.length ? (
-                  selected.assets.map((a, i) => (
+                  [...selected.assets].sort((a, b) => (a.period.match(/\d{4}/)?.[0] || '9999').localeCompare(b.period.match(/\d{4}/)?.[0] || '9999')).map((a, i) => (
                     <div
                       key={i}
                       className="border-t border-slate-800 first:border-t-0 py-3 first:pt-0 space-y-1"
@@ -550,9 +574,11 @@ export default function RegistroPolitico({ onNavigate, initialPoliticianId }: Re
                     </div>
                   ))
                 ) : (
-                  <Missing text="Sin DDJJ individual oficial cargada." />
+                  <Missing text="Todavía no se incorporaron DDJJ históricas verificadas para este perfil. Esto no significa que nunca se hayan presentado." />
                 )}
                 <div className="mt-3 p-3 bg-slate-950/60 border border-slate-800 rounded-xl text-[10px] text-slate-400">
+                  <p className="mb-2">Una variación nominal no demuestra enriquecimiento ilícito. Para comparar poder adquisitivo se necesitan índices y criterios de valuación homogéneos.</p>
+                  <p className="mb-2">Cobertura: {selected.assets.filter(a => /\d{4}/.test(a.period)).length} períodos documentados en esta ficha. No representa necesariamente la totalidad de las declaraciones presentadas.</p>
                   {assetChange ? (
                     <>
                       Variación comparable {assetChange.from} → {assetChange.to}:{' '}
@@ -576,8 +602,13 @@ export default function RegistroPolitico({ onNavigate, initialPoliticianId }: Re
 
             <Panel
               icon={<Scale className="w-4 h-4 text-rose-400" />}
-              title="Situación judicial documentada"
+              title="Situación judicial documentada · explicación sencilla"
             >
+              <div className="mb-4 rounded-xl border border-sky-500/25 bg-sky-500/5 p-3 text-xs text-slate-300 leading-relaxed">
+                <p><strong className="text-white">¿Qué significa cada estado?</strong> Una denuncia o un procesamiento no son una condena. Una condena no firme todavía puede revisarse. El motivo de un sobreseimiento debe leerse en la resolución judicial.</p>
+                <button type="button" className="mt-2 text-sky-300 underline underline-offset-2" aria-expanded={showJudicialHelp} onClick={() => setShowJudicialHelp(v => !v)}>{showJudicialHelp ? 'Ocultar explicaciones' : 'Ver explicaciones de los estados judiciales'}</button>
+                {showJudicialHelp && <dl className="mt-3 space-y-2">{Object.entries(ESTADOS).map(([key, item]) => <div key={key}><dt className="font-semibold text-white">{item.titulo}</dt><dd>{item.explicacion}</dd></div>)}<div><dt className="font-semibold text-white">¿Por qué puede haber un sobreseimiento?</dt><dd>{Object.values(CAUSALES).join(' ')}</dd></div></dl>}
+              </div>
               {selected.judicial.length ? (
                 selected.judicial.map((j, i) => (
                   <div
@@ -597,6 +628,7 @@ export default function RegistroPolitico({ onNavigate, initialPoliticianId }: Re
                     <p className="text-[10px] text-slate-500 mt-1 leading-relaxed">
                       {j.note}
                     </p>
+                    <p className="text-[10px] text-amber-200/80 mt-2">El estado mostrado es el que figura en el registro cargado. Consultá la resolución original para conocer su alcance, fundamentos y si está firme.</p>
                     <Source source={j.source} />
                   </div>
                 ))

@@ -16,6 +16,7 @@ const SimuladorPrecios = lazy(() => import('./views/SimuladorPrecios'));
 const RegistroPolitico = lazy(() => import('./views/RegistroPolitico'));
 const IntegridadPartidaria = lazy(() => import('./views/IntegridadPartidaria'));
 const GastoPublico = lazy(() => import('./views/GastoPublico'));
+const PautaPublicitaria = lazy(() => import('./views/PautaPublicitaria'));
 const TransparenciaEstado = lazy(() => import('./views/TransparenciaEstado'));
 const MethodologyPage = lazy(() => import('./views/MethodologyPage'));
 const Donaciones = lazy(() => import('./views/Donaciones'));
@@ -135,6 +136,9 @@ export function AppContent() {
     } else if (path === '/partidos') {
       title = 'Integridad Partidaria desde 1983 | Con La Tuya, Contribuyente';
       description = 'Registro de partidos y coaliciones políticas desde 1983 con resoluciones judiciales firmes y cobertura metodológica.';
+    } else if (path === '/pauta-publicitaria') {
+      title = 'Pauta Publicitaria Estatal | Con La Tuya, Contribuyente';
+      description = 'Registro documental de publicidad oficial por organismo, medio, proveedor y beneficiario comprobado.';
     } else if (path === '/gasto') {
       title = 'Gasto Público | Con La Tuya, Contribuyente';
       description = 'Análisis de presupuesto aprobado vs. gasto ejecutado por jurisdicción, finalidad, compras públicas COMPR.AR y publicidad oficial.';
@@ -217,6 +221,7 @@ export function AppContent() {
             <Route path="/mapa-tributario/fuentes" element={<MapaTributarioDashboard />} />
             <Route path="/mapa-tributario/metodologia" element={<MapaTributarioDashboard />} />
             <Route path="/admin/mapa-tributario" element={<MapaTributarioDashboard />} />
+            <Route path="/pauta-publicitaria" element={<PautaPublicitaria />} />
             <Route path="/gasto" element={<GastoPublico />} />
             <Route path="/transparencia" element={<TransparenciaEstado />} />
             <Route path="/metodologia" element={<MethodologyPage />} />

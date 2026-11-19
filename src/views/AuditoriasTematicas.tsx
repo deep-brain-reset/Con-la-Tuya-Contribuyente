@@ -4,6 +4,7 @@
  */
 
 import React, { useMemo, useState } from 'react';
+import InventarioConicet from '../components/InventarioConicet';
 import {
   Microscope,
   GraduationCap,
@@ -79,6 +80,8 @@ export default function AuditoriasTematicas({ onNavigate, initialSlug }: Auditor
           );
         })}
       </section>
+
+      {activeAudit.slug.includes('conicet') && <InventarioConicet />}
 
       {/* Ficha de Auditoría Sectorial Activa */}
       <section id="active-audit-detail" className="bg-slate-900/40 border border-slate-800 rounded-2xl p-4 sm:p-6 space-y-6 scroll-mt-28">

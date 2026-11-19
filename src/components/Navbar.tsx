@@ -68,6 +68,7 @@ export const NAVIGATION_PILLARS: NavPillar[] = [
       { id: 'boletas-y-subsidios', label: 'Impuestos en Luz, Gas, Agua y ABL', shortLabel: 'Impuestos en Servicios', description: 'Casos documentados, fuentes y posibles cobros duplicados', icon: Layers },
       { id: 'mapa-tributario', label: 'Mapa Tributario Auditado', shortLabel: 'Mapa Tributario', description: 'Explorador de normas, alícuotas y hechos imponibles', icon: Layers },
       { id: 'gasto', label: 'Presupuesto, Gasto y Compras', shortLabel: 'Gasto y Compras', description: 'Ejecución presupuestaria, contrataciones y pauta', icon: TrendingUp },
+      { id: 'pauta-publicitaria', label: 'Pauta Publicitaria Estatal', shortLabel: 'Pauta Estatal', description: 'Publicidad oficial por medio, proveedor y beneficiario documentado', icon: FileText },
       { id: 'mapa', label: 'Distribución Territorial', shortLabel: 'Mapa Nacional', description: 'Mapa nacional de jurisdicciones y presupuestos', icon: Award },
       { id: 'calculadora', label: 'Calculadora de Presión Fiscal', shortLabel: 'Calculadora Fiscal', description: 'Estimación de carga tributaria sobre ingresos', icon: Calculator },
       { id: 'simulador', label: 'Simulador de Precio Final', shortLabel: 'Simulador Precios', description: 'Incidencia de impuestos en bienes y servicios', icon: ShoppingCart }
