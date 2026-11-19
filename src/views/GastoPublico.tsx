@@ -188,10 +188,10 @@ export default function GastoPublico() {
         ))}</div>
       </section>
 
-      <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/5 p-4 sm:p-5 space-y-3">
-        <h2 className="text-lg font-bold text-white">Auditoría de pauta estatal: medios, periodistas y creadores</h2>
+      <div className="rounded-2xl border-2 border-emerald-400 bg-emerald-500/10 p-5 sm:p-6 space-y-4" id="auditoria-pauta-estatal">
+        <h2 className="text-lg font-bold text-white">PAUTA PUBLICITARIA ESTATAL — CANALES DE TV, PERIODISTAS Y STREAMERS</h2>
         <p className="text-sm text-slate-300 leading-relaxed">Dentro de Gasto Público podés consultar contratos, pagos y beneficiarios documentados de publicidad oficial, con separación explícita entre ingresos de empresas y pagos personales.</p>
-        <a href="#/pauta-publicitaria" className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-500">Explorar pauta publicitaria por medio y beneficiario <ExternalLink className="w-4 h-4" /></a>
+        <a href="#/pauta-publicitaria" className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-500">VER PAUTA POR CANAL, PERIODISTA Y BENEFICIARIO <ExternalLink className="w-4 h-4" /></a>
       </div>
       <section className="space-y-4 pt-2" id="pauta-publicitaria">
         <div className="flex items-start gap-3"><Tv className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" /><div><h2 className="text-lg font-bold text-white">Pauta / publicidad oficial por medio</h2><p className="text-sm text-slate-300 mt-1 max-w-4xl leading-relaxed">Muestra cuánto dinero público recibió cada medio/canal cuando existe una publicación oficial suficientemente desagregada. La existencia de pauta, por sí sola, no prueba una contraprestación editorial, censura ni una instrucción para “decir o dejar de decir” contenidos.</p></div></div>
