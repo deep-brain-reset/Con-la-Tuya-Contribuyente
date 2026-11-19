@@ -518,10 +518,11 @@ export default function RegistroPolitico({ onNavigate, initialPoliticianId }: Re
 
               <Panel
                 icon={<Landmark className="w-4 h-4 text-emerald-400" />}
-                title="Historial patrimonial / DDJJ"
+                title="Historial patrimonial histórico / DDJJ"
               >
+                <p className="mb-3 text-xs leading-relaxed text-slate-300">Serie histórica desde la primera DDJJ pública verificable hasta la última disponible. Se conservan las declaraciones anteriores aunque ya no figuren en el portal actual. Los años sin documentos se identifican como vacíos de información, nunca como patrimonio cero.</p>
                 {selected.assets.length ? (
-                  selected.assets.map((a, i) => (
+                  [...selected.assets].sort((a, b) => (a.period.match(/\d{4}/)?.[0] || '9999').localeCompare(b.period.match(/\d{4}/)?.[0] || '9999')).map((a, i) => (
                     <div
                       key={i}
                       className="border-t border-slate-800 first:border-t-0 py-3 first:pt-0 space-y-1"
@@ -552,10 +553,11 @@ export default function RegistroPolitico({ onNavigate, initialPoliticianId }: Re
                     </div>
                   ))
                 ) : (
-                  <Missing text="Sin DDJJ individual oficial cargada." />
+                  <Missing text="Todavía no se incorporaron DDJJ históricas verificadas para este perfil. Esto no significa que nunca se hayan presentado." />
                 )}
                 <div className="mt-3 p-3 bg-slate-950/60 border border-slate-800 rounded-xl text-[10px] text-slate-400">
                   <p className="mb-2">Una variación nominal no demuestra enriquecimiento ilícito. Para comparar poder adquisitivo se necesitan índices y criterios de valuación homogéneos.</p>
+                  <p className="mb-2">Cobertura: {selected.assets.filter(a => /\d{4}/.test(a.period)).length} períodos documentados en esta ficha. No representa necesariamente la totalidad de las declaraciones presentadas.</p>
                   {assetChange ? (
                     <>
                       Variación comparable {assetChange.from} → {assetChange.to}:{' '}
