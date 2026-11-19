@@ -20,6 +20,7 @@ import {
   Send
 } from 'lucide-react';
 import { POLITICAL_TRANSPARENCY, calculateAssetChange } from '../data/transparenciaPolitica';
+import { ESTADOS, CAUSALES, type EstadoJudicial, type CausalSobreseimiento } from '../lib/judicialExplicado';
 import { EXECUTIVE_AUTHORITIES_2026 } from '../data/autoridadesEjecutivas2026';
 import { CONGRUENCE_BLOG_ENTRIES, CONGRUENCE_PATTERN_LABELS } from '../data/blogCongruencia';
 
@@ -83,6 +84,7 @@ export default function RegistroPolitico({ onNavigate, initialPoliticianId }: Re
     filtered[0] ||
     ALL_POLITICAL_RECORDS[0];
   const assetChange = selected ? calculateAssetChange(selected) : null;
+  const [showJudicialHelp, setShowJudicialHelp] = useState(false);
   const executiveCount = ALL_POLITICAL_RECORDS.filter(r =>
     ['Nacion', 'Provincia', 'CABA'].includes(r.level)
   ).length;
@@ -553,6 +555,7 @@ export default function RegistroPolitico({ onNavigate, initialPoliticianId }: Re
                   <Missing text="Sin DDJJ individual oficial cargada." />
                 )}
                 <div className="mt-3 p-3 bg-slate-950/60 border border-slate-800 rounded-xl text-[10px] text-slate-400">
+                  <p className="mb-2">Una variación nominal no demuestra enriquecimiento ilícito. Para comparar poder adquisitivo se necesitan índices y criterios de valuación homogéneos.</p>
                   {assetChange ? (
                     <>
                       Variación comparable {assetChange.from} → {assetChange.to}:{' '}
@@ -576,8 +579,13 @@ export default function RegistroPolitico({ onNavigate, initialPoliticianId }: Re
 
             <Panel
               icon={<Scale className="w-4 h-4 text-rose-400" />}
-              title="Situación judicial documentada"
+              title="Situación judicial documentada · explicación sencilla"
             >
+              <div className="mb-4 rounded-xl border border-sky-500/25 bg-sky-500/5 p-3 text-xs text-slate-300 leading-relaxed">
+                <p><strong className="text-white">¿Qué significa cada estado?</strong> Una denuncia o un procesamiento no son una condena. Una condena no firme todavía puede revisarse. El motivo de un sobreseimiento debe leerse en la resolución judicial.</p>
+                <button type="button" className="mt-2 text-sky-300 underline underline-offset-2" aria-expanded={showJudicialHelp} onClick={() => setShowJudicialHelp(v => !v)}>{showJudicialHelp ? 'Ocultar explicaciones' : 'Ver explicaciones de los estados judiciales'}</button>
+                {showJudicialHelp && <dl className="mt-3 space-y-2">{Object.entries(ESTADOS).map(([key, item]) => <div key={key}><dt className="font-semibold text-white">{item.titulo}</dt><dd>{item.explicacion}</dd></div>)}<div><dt className="font-semibold text-white">¿Por qué puede haber un sobreseimiento?</dt><dd>{Object.values(CAUSALES).join(' ')}</dd></div></dl>}
+              </div>
               {selected.judicial.length ? (
                 selected.judicial.map((j, i) => (
                   <div
@@ -597,6 +605,7 @@ export default function RegistroPolitico({ onNavigate, initialPoliticianId }: Re
                     <p className="text-[10px] text-slate-500 mt-1 leading-relaxed">
                       {j.note}
                     </p>
+                    <p className="text-[10px] text-amber-200/80 mt-2">El estado mostrado es el que figura en el registro cargado. Consultá la resolución original para conocer su alcance, fundamentos y si está firme.</p>
                     <Source source={j.source} />
                   </div>
                 ))
